@@ -10,10 +10,8 @@ public class SubTask {
     private Long id;
     private String name;
     private Status status;
-    @ManyToMany(cascade=CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Person> responsiblePersons;
-    @ManyToOne(cascade=CascadeType.ALL)
-    private Task task;
 
     public SubTask() {
     }
@@ -64,7 +62,6 @@ public class SubTask {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", responsiblePersons=" + responsiblePersons +
-                ", task=" + task +
                 '}';
     }
 }

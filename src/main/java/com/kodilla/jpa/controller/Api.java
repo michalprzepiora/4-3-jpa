@@ -7,10 +7,12 @@ import com.kodilla.jpa.domain.Task;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -33,13 +35,13 @@ public class Api {
         SubTask cook3 = new SubTask(null, "pasta preparation", Status.IN_WORK, Arrays.asList(jarek, piotr));
         SubTask cook4 = new SubTask(null, "serving on a plate", Status.TO_DO, Arrays.asList(karolina, piotr, ala, jarek));
 
-        SubTask clean1 = new SubTask(null, "dust wiping", Status.DONE, Arrays.asList(ala));
-        SubTask clean2 = new SubTask(null, "carpet cleaning", Status.IN_WORK, Arrays.asList(ala, piotr, jarek));
-        SubTask clean3 = new SubTask(null, "washing windows", Status.IN_WORK, Arrays.asList(karolina));
-        SubTask clean4 = new SubTask(null, "mopping the floor", Status.TO_DO, Arrays.asList(karolina,jarek));
+        SubTask clean1 = new SubTask(null, "dust wiping", Status.DONE, List.of(ala));
+        SubTask clean2 = new SubTask(null, "carpet cleaning", Status.IN_WORK, List.of(ala, piotr, jarek));
+        SubTask clean3 = new SubTask(null, "washing windows", Status.IN_WORK, List.of(karolina));
+        SubTask clean4 = new SubTask(null, "mopping the floor", Status.TO_DO, List.of(karolina, jarek));
 
-        Task cooking = new Task(null, "Cooking",Status.IN_WORK,Arrays.asList(ala,karolina),Arrays.asList(cook1,cook2,cook3,cook4));
-        Task cleaning = new Task(null, "Cleaning",Status.TO_DO,Arrays.asList(piotr,jarek),Arrays.asList(clean1,clean2,clean3,clean4));
+        Task cooking = new Task(null, "Cooking", Status.IN_WORK, new HashSet<>(Arrays.asList(ala, karolina)), new HashSet<>(Arrays.asList(cook1, cook2, cook3, cook4)));
+        Task cleaning = new Task(null, "Cleaning", Status.TO_DO, new HashSet<>(Arrays.asList(piotr, jarek)), new HashSet<>(Arrays.asList(clean1, clean2, clean3, clean4)));
 
         EntityManager manager = entityManagerFactory.createEntityManager();
 
@@ -49,15 +51,18 @@ public class Api {
         manager.flush();
         manager.getTransaction().commit();
 
-        return Arrays.asList(cooking,cleaning);
+        return Arrays.asList(cooking, cleaning);
     }
 
     @GetMapping("get")
     public List<Task> getData() throws InterruptedException {
         EntityManager em = entityManagerFactory.createEntityManager();
-        TypedQuery<Task> query = em.createQuery(
-                "from Task  where id in (7,8)",
-                Task.class);
+        TypedQuery<Task> query = em.createQuery("from Task", Task.class);
+        EntityGraph<Task> entityGraph = em.createEntityGraph(Task.class);
+        entityGraph.addAttributeNodes("responsiblePersons");
+        entityGraph.addSubgraph("subTasks").addAttributeNodes("responsiblePersons");
+
+        query.setHint("javax.persistence.fetchgraph",entityGraph);
 
         List<Task> result = query.getResultList();
         Thread.sleep(5000);

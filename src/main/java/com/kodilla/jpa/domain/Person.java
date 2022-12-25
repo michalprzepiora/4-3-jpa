@@ -1,7 +1,9 @@
 package com.kodilla.jpa.domain;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Person {
@@ -10,10 +12,6 @@ public class Person {
     private Long id;
     private String name;
     private String surname;
-    @ManyToMany(cascade=CascadeType.ALL)
-    private List<SubTask> subTasks;
-    @ManyToMany(cascade=CascadeType.ALL)
-    private List<Task> Tasks;
 
     public Person() {
     }
@@ -48,21 +46,6 @@ public class Person {
         this.surname = surname;
     }
 
-    public List<SubTask> getSubTasks() {
-        return subTasks;
-    }
-
-    public void setSubTasks(List<SubTask> subTasks) {
-        this.subTasks = subTasks;
-    }
-
-    public List<Task> getTasks() {
-        return Tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        Tasks = tasks;
-    }
 
     @Override
     public String toString() {
@@ -70,8 +53,6 @@ public class Person {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", subTasks=" + subTasks +
-                ", Tasks=" + Tasks +
                 '}';
     }
 }

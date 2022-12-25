@@ -1,9 +1,10 @@
 package com.kodilla.jpa.domain;
 
-import lombok.Getter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Task {
@@ -13,17 +14,16 @@ public class Task {
     private String name;
     private Status status;
     @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(name = "Task_responsiblePersons",
-            joinColumns = @JoinColumn(name = "Task_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "responsiblePersons_id", referencedColumnName = "id"))
-    private List<Person> responsiblePersons = new java.util.ArrayList<>();
-    @OneToMany(cascade=CascadeType.ALL)
-    private List<SubTask> subTasks;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<Person> responsiblePersons;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<SubTask> subTasks;
 
     public Task() {
     }
 
-    public Task(Long id, String name, Status status, List<Person> responsiblePersons, List<SubTask> subTasks) {
+    public Task(Long id, String name, Status status, Set<Person> responsiblePersons, Set<SubTask> subTasks) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -55,19 +55,19 @@ public class Task {
         this.status = status;
     }
 
-    public List<Person> getResponsiblePersons() {
+    public Set<Person> getResponsiblePersons() {
         return responsiblePersons;
     }
 
-    public void setResponsiblePersons(List<Person> responsiblePersons) {
+    public void setResponsiblePersons(Set<Person> responsiblePersons) {
         this.responsiblePersons = responsiblePersons;
     }
 
-    public List<SubTask> getSubTasks() {
+    public Set<SubTask> getSubTasks() {
         return subTasks;
     }
 
-    public void setSubTasks(List<SubTask> subTasks) {
+    public void setSubTasks(Set<SubTask> subTasks) {
         this.subTasks = subTasks;
     }
 
