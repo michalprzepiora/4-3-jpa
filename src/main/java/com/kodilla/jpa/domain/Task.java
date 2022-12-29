@@ -1,8 +1,5 @@
 package com.kodilla.jpa.domain;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import javax.persistence.*;
 import java.util.Set;
 
@@ -14,9 +11,7 @@ public class Task {
     private String name;
     private Status status;
     @ManyToMany(cascade = {CascadeType.ALL})
-    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<Person> responsiblePersons;
-    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL)
     private Set<SubTask> subTasks;
 
